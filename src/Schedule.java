@@ -12,7 +12,7 @@ public class Schedule implements Comparable<Schedule> {
 	// however, we need to calculate it a lot, so we memorize it
 	// if memory is an issue, however, try calculating it
 	private int tardiness;
-	
+
 	public Schedule(){
 		this.previous = null;
 		this.jobID = -1;

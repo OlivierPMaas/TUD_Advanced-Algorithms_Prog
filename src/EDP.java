@@ -1,3 +1,5 @@
+import static java.lang.Math.min;
+
 /**
  * Created by Olivier on 10/3/2017.
  */
@@ -45,11 +47,6 @@ public class EDP {
     }
 
     public int computeOptimalTardiness(Schedule s, int startTime) {
-        // base cases!
-        
-
-
-
         int j = s.getDepth()-1;
         int t = startTime;
         Schedule k = s.findK();
@@ -59,10 +56,36 @@ public class EDP {
         Schedule S = s.removeK();
         // -1, because we start counting at 0 instead of at 1 (as in Lawler 1977).
         int kPrime = S.findK().jobID;
-        int value1 = computeOptimalTardiness(S.getScheduleBetween(0,kPrime + delta - 1).removeK(),t);
+        Schedule subSchedule1 = S.getScheduleBetween(0,kPrime + delta - 1).removeK();
+        int value1;
+        if(subSchedule1.getDepth() <= 3) {
+            if(subSchedule1.getDepth() == 1) {
+                value1 = subSchedule1.getTardiness();
+            }
+            else if(subSchedule1.getDepth() == 2) {
+                int T1 = subSchedule1.getTardiness();
+
+                Schedule temp = subSchedule1.previous;
+                subSchedule1.previous = null;
+                temp.previous = subSchedule1;
+                int T2 = subSchedule1.getTardiness();
+                value1 = min(T1,T2);
+                if(T1 == T2) {
+                    System.out.println("Watch out! T1 == T2.");
+                }
+            }
+            // Depth is 3
+            else {
+                value1 = subSchedule1.getTardiness();
+            }
+
+        }
+        else {
+                value1 = computeOptimalTardiness(subSchedule1, t);
+            }
         int value2 = 4;
         int value3 = 4;
-        return 4;
+        return value1 + value2 + value3;
     }
 
 
