@@ -8,12 +8,13 @@ public class EDP {
     public EDP(ProblemInstance instance) {
         numJobs = instance.getNumJobs();
         jobs = instance.getJobs();
+        Greedy greedy = new Greedy(instance);
+        //build up schedule, sorted in nondecreasing deadline order
+        Schedule greedySchedule = greedy.getSchedule();
     }
 
     public int findOptimalTardiness() {
-        //build up schedule
-        //sort schedule in nondecreasing deadline order
-        //redefine S
+
         //return computeOptimalTardiness(s,0);
         return 4;
     }
@@ -29,7 +30,7 @@ public class EDP {
         Schedule k = s.findK();
         return 6;
 
-        
+
         //value1 = ;
         //value2 = ;
         //value3 = ;

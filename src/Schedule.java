@@ -6,7 +6,7 @@ public class Schedule implements Comparable<Schedule> {
 	// between schedules, this implementation stores this overlap only once
 	private Schedule previous;
 	private int jobID;
-	public int jobLength;
+	private int jobLength;
 	
 	// tardiness can be calculated instead of memorized
 	// however, we need to calculate it a lot, so we memorize it
@@ -61,7 +61,7 @@ public class Schedule implements Comparable<Schedule> {
 		}
 		// recursion
 		Schedule candidate = previous.findK();
-		if (this.jobLength > candidate.jobLength) {
+		if (this.jobLength >= candidate.jobLength) {
 			return this;
 		} else {
 			return candidate;
