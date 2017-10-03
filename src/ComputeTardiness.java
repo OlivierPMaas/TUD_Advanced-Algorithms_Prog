@@ -36,7 +36,11 @@ public class ComputeTardiness {
 	// reads a problem, and outputs the result of both greedy and best-first
     public static void main (String args[]) {
 		ProblemInstance instance = readInstance(args[0]);
-		
+
+		EDP edp = new EDP(instance);
+		int edpTardiness = edp.findOptimalTardiness();
+		System.out.println(edpTardiness);
+
 		Greedy greedy = new Greedy(instance);
 		Schedule greedySchedule = greedy.getSchedule();
 		System.out.println(greedySchedule.getTardiness());
@@ -44,5 +48,6 @@ public class ComputeTardiness {
 		BestFirst bestFirst = new BestFirst(instance);
 		Schedule bestFirstSchedule = bestFirst.getSchedule();
 		System.out.println(bestFirstSchedule.getTardiness());
+
 	}
 }
