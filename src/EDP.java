@@ -63,13 +63,16 @@ public class EDP {
                 value1 = subSchedule1.getTardiness();
             }
             else if(subSchedule1.getDepth() == 2) {
+                subSchedule1 = subSchedule1.fixTardiness(0);
                 int T1 = subSchedule1.getTardiness();
 
                 Schedule temp = subSchedule1.previous;
                 subSchedule1.previous = null;
                 temp.previous = subSchedule1;
-                int T2 = subSchedule1.getTardiness();
+                temp = temp.fixTardiness(0);
+                int T2 = temp.getTardiness();
                 value1 = min(T1,T2);
+                System.out.println(":D");
                 if(T1 == T2) {
                     System.out.println("Watch out! T1 == T2.");
                 }
@@ -90,6 +93,6 @@ public class EDP {
 
 
     public int computeTardiness(Schedule s, int startTime) {
-        return s.getTardiness() + startTime;
+        return s.fixTardiness(startTime).getTardiness();
     }
 }

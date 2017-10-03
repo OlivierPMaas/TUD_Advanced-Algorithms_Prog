@@ -7,6 +7,7 @@ public class Schedule implements Comparable<Schedule> {
 	public Schedule previous;
 	public int jobID;
 	public int jobLength;
+	public int jobDueTime;
 	
 	// tardiness can be calculated instead of memorized
 	// however, we need to calculate it a lot, so we memorize it
@@ -18,6 +19,7 @@ public class Schedule implements Comparable<Schedule> {
 		this.jobID = -1;
 		this.jobLength = 0;
 		this.tardiness = 0;
+		this.jobDueTime = 0;
 	}
 	
 	// add an additional job to the schedule
@@ -25,6 +27,7 @@ public class Schedule implements Comparable<Schedule> {
 		this.previous = s;
 		this.jobID = jobID;
 		this.jobLength = jobLength;
+		this.jobDueTime = jobDueTime;
 		this.tardiness = Math.max(0, getTotalTime() - jobDueTime);
 		
 		if(previous != null) {
@@ -68,9 +71,24 @@ public class Schedule implements Comparable<Schedule> {
 		if(this.jobID == id) {
 			return this.previous;
 		}
+		if(this.previous.jobID == id) {
+			Schedule secondlast = this.previous.previous;
+			if(secondlast != null) {
+				this.tardiness = secondlast.tardiness + Math.max(0,
+						secondlast.getTotalTime() + this.jobLength - jobDueTime);
+				this.previous = secondlast;
+				return this;
+			}
+			else {
+				this.tardiness = Math.max(0,this.jobLength - jobDueTime);
+				this.previous = null;
+				return this;
+			}
+		}
 		else {
 			Schedule output = this;
 			output.previous = this.previous.removeID(id);
+			output.tardiness = output.previous.getTardiness() + Math.max(0, this.getTotalTime() - jobDueTime);
 			return output;
 		}
 	}
@@ -115,7 +133,19 @@ public class Schedule implements Comparable<Schedule> {
 			else {
 				result.previous = null;
 			}
-			return result;
+			return result.fixTardiness(0);
+		}
+	}
+
+	public Schedule fixTardiness(int startTime) {
+		if(this.previous == null) {
+			this.tardiness = Math.max(0,startTime + this.jobLength - this.jobDueTime);
+			return this;
+		}
+		else {
+			this.previous = this.previous.fixTardiness(startTime);
+			this.tardiness = Math.max(0, this.previous.getTardiness() + this.jobLength - this.jobDueTime);
+			return this;
 		}
 	}
 

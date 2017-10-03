@@ -45,9 +45,9 @@ public class ComputeTardiness {
 		Schedule greedySchedule = greedy.getSchedule();
 		System.out.println(greedySchedule.getTardiness());
 		
-		BestFirst bestFirst = new BestFirst(instance);
-		Schedule bestFirstSchedule = bestFirst.getSchedule();
-		System.out.println(bestFirstSchedule.getTardiness());
+//		BestFirst bestFirst = new BestFirst(instance);
+//		Schedule bestFirstSchedule = bestFirst.getSchedule();
+//		System.out.println(bestFirstSchedule.getTardiness());
 
 	}
 }
