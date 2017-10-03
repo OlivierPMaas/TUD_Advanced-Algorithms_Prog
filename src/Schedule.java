@@ -109,8 +109,11 @@ public class Schedule implements Comparable<Schedule> {
 		if(id2 <= this.jobID) {
 			return this.cutOffBefore(id);
 		}
-		else {
+		else if(this.previous != null) {
 			return this.previous.getScheduleBetween(id, id2);
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -153,6 +156,15 @@ public class Schedule implements Comparable<Schedule> {
 		int time = jobLength;
 		if(previous != null) time += previous.getTotalTime();
 		return time;
+	}
+
+	public int getCompletionTime(int startTime) {
+		if(this.previous == null) {
+			return this.jobLength + startTime;
+		}
+		else {
+			return this.jobLength + this.previous.getCompletionTime(startTime);
+		}
 	}
 
 	public int getTardiness(){

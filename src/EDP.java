@@ -51,46 +51,68 @@ public class EDP {
         int t = startTime;
         Schedule k = s.findK();
         // Range over this soon
-        int delta = 0;//numJobs - s.getDepth();
+
+        // NOTE: k or kPrime?!?!
+        int delta = numJobs - k.jobID - 1;
 
         Schedule S = s.removeK();
-        // -1, because we start counting at 0 instead of at 1 (as in Lawler 1977).
-        int kPrime = S.findK().jobID;
-        Schedule subSchedule1 = S.getScheduleBetween(0,kPrime + delta - 1).removeK();
+
+        Schedule kPrime = S.findK();
+
+        // ---------------- CALCULATION OF VALUE 1
+
+        // -1 at id2, because we start counting at 0 instead of at 1 (as in Lawler 1977).
+
+        // WATCH OOUUUUUUT: I think we might not actually need to subtract 1 after all, because our kPrime jobID is
+        // itself starting count from 0. I've removed the -1 for now, but let's discuss soon.
         int value1;
-        if(subSchedule1.getDepth() <= 3) {
-            if(subSchedule1.getDepth() == 1) {
-                value1 = subSchedule1.getTardiness();
-            }
-            else if(subSchedule1.getDepth() == 2) {
-                subSchedule1 = subSchedule1.fixTardiness(0);
-                int T1 = subSchedule1.getTardiness();
-
-                Schedule temp = subSchedule1.previous;
-                subSchedule1.previous = null;
-                temp.previous = subSchedule1;
-                temp = temp.fixTardiness(0);
-                int T2 = temp.getTardiness();
-                value1 = min(T1,T2);
-                System.out.println(":D");
-                if(T1 == T2) {
-                    System.out.println("Watch out! T1 == T2.");
-                }
-            }
-            // Depth is 3
-            else {
-                value1 = subSchedule1.getTardiness();
-            }
-
+        Schedule subSchedule1WithK = S.getScheduleBetween(0,kPrime.jobID + delta);
+        if(subSchedule1WithK == null) {
+            value1 = 0;
         }
         else {
+            Schedule subSchedule1 = subSchedule1WithK.removeK();
+            if (subSchedule1.getDepth() <= 3) {
+                if (subSchedule1.getDepth() == 1) {
+                    value1 = subSchedule1.getTardiness();
+                } else if (subSchedule1.getDepth() == 2) {
+                    subSchedule1 = subSchedule1.fixTardiness(startTime);
+                    int T1 = computeTardiness(subSchedule1, startTime);
+
+                    Schedule temp = subSchedule1.previous;
+                    subSchedule1.previous = null;
+                    temp.previous = subSchedule1;
+                    int T2 = computeTardiness(temp, startTime);
+                    value1 = min(T1, T2);
+                }
+                // Depth is 3
+                else {
+                    value1 = subSchedule1.getTardiness();// FILL IN!
+                }
+
+            } else {
                 value1 = computeOptimalTardiness(subSchedule1, t);
             }
-        int value2 = 4;
+        }
+
+        // ---------------- CALCULATION OF VALUE 2
+        // Note: s, not S. (Note: S = s - {job_kPrime}).
+        Schedule subSchedule2 = s.getScheduleBetween(0,kPrime.jobID + delta);
+        int value2;
+        if(subSchedule2 != null) {
+            value2 = Math.max(0, subSchedule2.getCompletionTime(startTime) - kPrime.jobDueTime);
+        }
+        else {
+            //Is this an OK case to have?! We do get an error sometimes, in some cases (e.g. instances/random_RDD=0.6_TF=0.6_#60.dat).
+            System.out.println("Help");
+            value2 = 4;
+        }
+        // ---------------- CALCULATION OF VALUE 3
         int value3 = 4;
+
+        // ---------------- Result
         return value1 + value2 + value3;
     }
-
 
     public int computeTardiness(Schedule s, int startTime) {
         return s.fixTardiness(startTime).getTardiness();

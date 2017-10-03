@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ComputeTardinessTest {
     @Test
     void main() {
-        String[] arg = {"instances/random_RDD=0.6_TF=0.6_#55.dat"};
+        String[] arg = {"instances/random_RDD=0.6_TF=0.6_#60.dat"};
         ComputeTardiness.main(arg);
     }
 
