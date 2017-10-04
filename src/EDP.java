@@ -51,8 +51,6 @@ public class EDP {
         int t = startTime;
         Schedule k = s.findK();
         // Range over this soon
-
-        // NOTE: k or kPrime?!?!
         int delta = numJobs - k.jobID - 1;
 
         Schedule S = s.removeK();
@@ -103,9 +101,8 @@ public class EDP {
             value2 = Math.max(0, subSchedule2.getCompletionTime(startTime) - kPrime.jobDueTime);
         }
         else {
-            //Is this an OK case to have?! We do get an error sometimes, in some cases (e.g. instances/random_RDD=0.6_TF=0.6_#60.dat).
-            System.out.println("Help");
-            value2 = 4;
+            throw new java.lang.Error("Something went wrong. "
+                    + "This list can't be empty; at the very least, it should include k.");
         }
         // ---------------- CALCULATION OF VALUE 3
         int value3 = 4;

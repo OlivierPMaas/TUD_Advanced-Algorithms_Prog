@@ -103,16 +103,16 @@ public class Schedule implements Comparable<Schedule> {
 	// Used by EDP
 	public Schedule getScheduleBetween(int id, int id2) {
 		if(id < 0) {
-			throw new java.lang.Error("Tried to get too large a schedule 1");
+			throw new java.lang.Error("Tried to get too large a schedule");
 		}
-		// Put back id2 > this.jobID-case?
-		if(id2 <= this.jobID) {
+		if(id2 >= this.jobID) {
 			return this.cutOffBefore(id);
 		}
 		else if(this.previous != null) {
 			return this.previous.getScheduleBetween(id, id2);
 		}
 		else {
+			//Is this OK? Should we be able to get here? Should we then return null?
 			return null;
 		}
 	}
@@ -128,7 +128,6 @@ public class Schedule implements Comparable<Schedule> {
 		}
 		// if(this.jobID > id)
 		else {
-			System.out.println(this.jobID);
 			Schedule result = this;
 			if(this.previous != null) {
 				result.previous = this.previous.cutOffBefore(id);
@@ -149,6 +148,13 @@ public class Schedule implements Comparable<Schedule> {
 			this.previous = this.previous.fixTardiness(startTime);
 			this.tardiness = Math.max(0, this.previous.getTardiness() + this.jobLength - this.jobDueTime);
 			return this;
+		}
+	}
+
+	public void printer() {
+		System.out.println(this.jobID);
+		if(this.previous != null) {
+			this.previous.printer();
 		}
 	}
 
