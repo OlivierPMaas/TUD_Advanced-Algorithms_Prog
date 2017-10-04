@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.lang.Math.min;
@@ -51,7 +52,7 @@ public class EDP {
 
 
     public int computeOptimalTardinessMaster(Schedule s, int startTime) {
-        int j = s.getDepth()-1;
+        int j = s.jobID;
         Schedule k = s.findK();
 
         Schedule S = s.removeK();
@@ -59,18 +60,21 @@ public class EDP {
         Schedule kPrime = S.findK();
         List<Integer> tardinesses = new ArrayList<Integer>();
         // <, so no -1 correction needed for the fact that our jobs start at ID 0 rather than 1.
-        for(int delta = 0; delta < numJobs - k.jobID; delta++) {
+        for(int delta = 0; delta < j - k.jobID; delta++) {
             tardinesses.add(computeOptimalTardiness(s, startTime, delta));
         }
 
-        return tardinesses.stream().min(Integer::compare).get();
-
-
+        if (tardinesses.size() != 0) {
+            return tardinesses.stream().min(Integer::compare).get();
+        }
+        else {
+            return 0; // Or something else?
+        }
     }
 
     public int computeOptimalTardiness(Schedule s, int startTime, int delta) {
         int j = s.jobID;
-        
+
         //... When is k scheduled???
         Schedule k = s.findK();
 
@@ -78,7 +82,7 @@ public class EDP {
 
         if(S == null) {
             //System.out.println("Got here");
-            return 4; // Should we really?
+            return 0; // Should we really?
         }
         else {
             Schedule kPrime = S.findK();
