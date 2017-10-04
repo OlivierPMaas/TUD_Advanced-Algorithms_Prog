@@ -64,7 +64,7 @@ public class EDP {
         // WATCH OOUUUUUUT: I think we might not actually need to subtract 1 after all, because our kPrime jobID is
         // itself starting count from 0. I've removed the -1 for now, but let's discuss soon.
         int value1;
-        Schedule subSchedule1WithK = S.getScheduleBetween(0,kPrime.jobID + delta);
+        Schedule subSchedule1WithK = S.getScheduleBetween(startTime,kPrime.jobID + delta);
         if(subSchedule1WithK == null) {
             value1 = 0;
         }
@@ -85,7 +85,8 @@ public class EDP {
                 }
                 // Depth is 3
                 else {
-                    value1 = subSchedule1.getTardiness();// FILL IN!
+                    //CHANGE TO CORRECT CALCULATION
+                    value1 = subSchedule1.getTardiness();
                 }
 
             } else {
@@ -102,10 +103,19 @@ public class EDP {
         }
         else {
             throw new java.lang.Error("Something went wrong. "
-                    + "This list can't be empty; at the very least, it should include k.");
+                    + "This schedule can't be empty; at the very least, it should include k.");
         }
+
         // ---------------- CALCULATION OF VALUE 3
-        int value3 = 4;
+        int value3;
+        Schedule subSchedule3WithK = S.getScheduleBetween(kPrime.jobID + delta + 1,j);
+        if(subSchedule3WithK == null) {
+            value3 = 0;
+        }
+        else {
+            // CALCULATE VALUE3
+            value3=4;
+        }
 
         // ---------------- Result
         return value1 + value2 + value3;

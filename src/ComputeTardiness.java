@@ -39,11 +39,11 @@ public class ComputeTardiness {
 
 		EDP edp = new EDP(instance);
 		int edpTardiness = edp.findOptimalTardiness();
-		System.out.println(edpTardiness);
+		System.out.println("EDP tardiness: " + edpTardiness);
 
 		Greedy greedy = new Greedy(instance);
 		Schedule greedySchedule = greedy.getSchedule();
-		System.out.println(greedySchedule.getTardiness());
+		System.out.println("Greedy tardiness: " + greedySchedule.getTardiness());
 		
 //		BestFirst bestFirst = new BestFirst(instance);
 //		Schedule bestFirstSchedule = bestFirst.getSchedule();
