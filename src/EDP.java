@@ -70,27 +70,33 @@ public class EDP {
         }
         else {
             Schedule subSchedule1 = subSchedule1WithK.removeK();
-            if (subSchedule1.getDepth() <= 3) {
-                if (subSchedule1.getDepth() == 1) {
-                    value1 = subSchedule1.getTardiness();
-                } else if (subSchedule1.getDepth() == 2) {
-                    subSchedule1 = subSchedule1.fixTardiness(startTime);
-                    int T1 = computeTardiness(subSchedule1, startTime);
+            if(subSchedule1 == null) {
+                value1 = 0;
+            }
+            else {
+                System.out.println(subSchedule1);
+                if (subSchedule1.getDepth() <= 3) {
+                    if (subSchedule1.getDepth() == 1) {
+                        value1 = subSchedule1.getTardiness();
+                    } else if (subSchedule1.getDepth() == 2) {
+                        subSchedule1 = subSchedule1.fixTardiness(startTime);
+                        int T1 = computeTardiness(subSchedule1, startTime);
 
-                    Schedule temp = subSchedule1.previous;
-                    subSchedule1.previous = null;
-                    temp.previous = subSchedule1;
-                    int T2 = computeTardiness(temp, startTime);
-                    value1 = min(T1, T2);
-                }
-                // Depth is 3
-                else {
-                    //CHANGE TO CORRECT CALCULATION
-                    value1 = subSchedule1.getTardiness();
-                }
+                        Schedule temp = subSchedule1.previous;
+                        subSchedule1.previous = null;
+                        temp.previous = subSchedule1;
+                        int T2 = computeTardiness(temp, startTime);
+                        value1 = min(T1, T2);
+                    }
+                    // Depth is 3
+                    else {
+                        //CHANGE TO CORRECT CALCULATION
+                        value1 = subSchedule1.getTardiness();
+                    }
 
-            } else {
-                value1 = computeOptimalTardiness(subSchedule1, t);
+                } else {
+                    value1 = computeOptimalTardiness(subSchedule1, t);
+                }
             }
         }
 
