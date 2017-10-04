@@ -74,10 +74,12 @@ public class EDP {
                 value1 = 0;
             }
             else {
-                if (subSchedule1.getDepth() <= 3) {
+                if (subSchedule1.getDepth() <= 2) {
                     if (subSchedule1.getDepth() == 1) {
                         value1 = subSchedule1.getTardiness();
-                    } else if (subSchedule1.getDepth() == 2) {
+                    }
+                    //subSchedule1.getDepth() == 2
+                    else {
                         subSchedule1 = subSchedule1.fixTardiness(startTime);
                         int T1 = computeTardiness(subSchedule1, startTime);
 
@@ -87,12 +89,6 @@ public class EDP {
                         int T2 = computeTardiness(temp, startTime);
                         value1 = min(T1, T2);
                     }
-                    // Depth is 3
-                    else {
-                        //CHANGE TO CORRECT CALCULATION
-                        value1 = subSchedule1.getTardiness();
-                    }
-
                 } else {
                     value1 = computeOptimalTardiness(subSchedule1, t);
                 }
