@@ -74,7 +74,6 @@ public class EDP {
                 value1 = 0;
             }
             else {
-                System.out.println(subSchedule1);
                 if (subSchedule1.getDepth() <= 3) {
                     if (subSchedule1.getDepth() == 1) {
                         value1 = subSchedule1.getTardiness();
