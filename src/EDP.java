@@ -48,7 +48,6 @@ public class EDP {
 
     public int computeOptimalTardiness(Schedule s, int startTime) {
         int j = s.getDepth()-1;
-        int t = startTime;
         Schedule k = s.findK();
         // Range over this soon
         int delta = numJobs - k.jobID - 1;
@@ -76,7 +75,7 @@ public class EDP {
             else {
                 if (subSchedule1.getDepth() <= 2) {
                     if (subSchedule1.getDepth() == 1) {
-                        value1 = subSchedule1.getTardiness();
+                        value1 = computeTardiness(subSchedule1,startTime);
                     }
                     //subSchedule1.getDepth() == 2
                     else {
@@ -90,7 +89,7 @@ public class EDP {
                         value1 = min(T1, T2);
                     }
                 } else {
-                    value1 = computeOptimalTardiness(subSchedule1, t);
+                    value1 = computeOptimalTardiness(subSchedule1, startTime);
                 }
             }
         }
@@ -114,8 +113,31 @@ public class EDP {
             value3 = 0;
         }
         else {
-            // CALCULATE VALUE3
-            value3=4;
+            Schedule subSchedule3 = subSchedule3WithK.removeK();
+            if(subSchedule3 == null) {
+                value3 = 0;
+            }
+            else {
+                if (subSchedule3.getDepth() <= 2) {
+                    if (subSchedule3.getDepth() == 1) {
+                        value3 = computeTardiness(subSchedule3, subSchedule2.getCompletionTime(startTime));
+                    }
+                    //subSchedule1.getDepth() == 2
+                    else {
+                        subSchedule3 = subSchedule3.fixTardiness(subSchedule2.getCompletionTime(startTime));
+                        int T1 = computeTardiness(subSchedule3, subSchedule2.getCompletionTime(startTime));
+
+                        Schedule temp = subSchedule3.previous;
+                        subSchedule3.previous = null;
+                        temp.previous = subSchedule3;
+                        int T2 = computeTardiness(temp, subSchedule2.getCompletionTime(startTime));
+                        value3 = min(T1, T2);
+                    }
+                }
+                else {
+                    value3 = computeOptimalTardiness(subSchedule3, subSchedule2.getCompletionTime(startTime));
+                }
+            }
         }
 
         // ---------------- Result

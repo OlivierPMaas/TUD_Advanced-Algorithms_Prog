@@ -44,6 +44,10 @@ public class ComputeTardiness {
 		Greedy greedy = new Greedy(instance);
 		Schedule greedySchedule = greedy.getSchedule();
 		System.out.println("Greedy tardiness: " + greedySchedule.getTardiness());
+
+		if(edpTardiness > greedySchedule.getTardiness()) {
+			System.out.println("-------------------EDP SUBOPTIMAL\n\n\n");
+		}
 		
 //		BestFirst bestFirst = new BestFirst(instance);
 //		Schedule bestFirstSchedule = bestFirst.getSchedule();
