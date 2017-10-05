@@ -40,25 +40,13 @@ public class EDP {
         return computeOptimalTardinessMaster(this.greedyScheduleFixed,0);
     }
 
-    //CLEAN UP LATER
-    public void printer(Schedule s) {
-        if(s == null) {
-            return;
-        }
-        else {
-            System.out.println(s.jobID + " " + s.jobLength + " " + s.jobDueTime + " " + s.getTardiness());
-            printer(s.previous);
-        }
-    }
-
 
     public int computeOptimalTardinessMaster(Schedule s, int startTime) {
         int j = s.jobID;
         Schedule k = s.findK();
 
         if(s == null) {
-            //System.out.println("Got here");
-            return 0; // This, or 0? And: startTime, or some other value related to k?
+            return 0;
         }
         else if (s.getDepth()==1) {
             return Math.max(0, startTime + k.jobLength - k.jobDueTime);
@@ -82,23 +70,12 @@ public class EDP {
         Schedule S = s.removeK();
 
         // ---------------- CALCULATION OF VALUE 1
-
         int value1;
-
-        // -1 at id2, because we start counting at 0 instead of at 1 (as in Lawler 1977).
-        //
-        // WATCH OOUUUUUUT: I think we might not actually need to subtract 1 after all, because our kPrime jobID is
-        // itself starting count from 0. I've removed the -1 for now, but let's discuss soon.
-        //
-        //Also: id = 0 , or id = startTime?!
         Schedule subSchedule1WithK = S.getScheduleBetween(i, kPrime.jobID + delta);
         if (subSchedule1WithK == null) {
             value1 = 0;
         } else {
             Schedule subSchedule1 = subSchedule1WithK.removeID(kPrime.jobID);
-            if(subSchedule1.getDepth() == subSchedule1WithK.getDepth()) {
-                //System.out.println("This issue persists");
-            }
             if (subSchedule1 == null) {
                 value1 = 0;
             } else {
