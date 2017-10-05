@@ -75,11 +75,10 @@ public class Schedule implements Comparable<Schedule> {
 			return this;
 		}
 		else if(this.previous.jobID == id) {
-			Schedule secondlast = this.previous.previous;
-			if(secondlast != null) {
-				Schedule output = new Schedule(secondlast, this.jobID, this.jobLength, this.jobDueTime);
-				output.tardiness = secondlast.tardiness + Math.max(0,
-						secondlast.getTotalTime() + this.jobLength - jobDueTime);
+			if(this.previous.previous != null) {
+				Schedule output = new Schedule(this.previous.previous, this.jobID, this.jobLength, this.jobDueTime);
+				output.tardiness = this.previous.previous.tardiness + Math.max(0,
+						this.previous.previous.getTotalTime() + this.jobLength - jobDueTime);
 				return this;
 			}
 			else {
@@ -124,18 +123,17 @@ public class Schedule implements Comparable<Schedule> {
 			return null;
 		}
 		else if(this.jobID == id) {
-			Schedule cutOff = this;
-			cutOff.previous = null;
+			Schedule cutOff = new Schedule(null, this.jobID, this.jobLength, this.jobDueTime);
 			return cutOff;
 		}
 		// if(this.jobID > id)
 		else {
-			Schedule result = this;
+			Schedule result;
 			if(this.previous != null) {
-				result.previous = this.previous.cutOffBefore(id);
+				result = new Schedule(this.previous.cutOffBefore(id), this.jobID, this.jobLength, this.jobDueTime);
 			}
 			else {
-				result.previous = null;
+				result = new Schedule(null, this.jobID, this.jobLength, this.jobDueTime);
 			}
 			return result.fixTardiness(0);
 		}
@@ -143,13 +141,14 @@ public class Schedule implements Comparable<Schedule> {
 
 	public Schedule fixTardiness(int startTime) {
 		if(this.previous == null) {
-			this.tardiness = Math.max(0,startTime + this.jobLength - this.jobDueTime);
-			return this;
+			Schedule output = new Schedule(null, this.jobID, this.jobLength, this.jobDueTime);
+			output.tardiness = Math.max(0,startTime + this.jobLength - this.jobDueTime);
+			return output;
 		}
 		else {
-			this.previous = this.previous.fixTardiness(startTime);
-			this.tardiness = Math.max(0, this.previous.getTardiness() + this.jobLength - this.jobDueTime);
-			return this;
+			Schedule output = new Schedule(this.previous.fixTardiness(startTime), this.jobID, this.jobLength, this.jobDueTime);
+			output.tardiness = Math.max(0, this.previous.getTardiness() + this.jobLength - this.jobDueTime);
+			return output;
 		}
 	}
 
