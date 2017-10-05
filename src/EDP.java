@@ -46,7 +46,7 @@ public class EDP {
             return;
         }
         else {
-            System.out.println(s.jobID);
+            System.out.println(s.jobID + " " + s.jobLength + " " + s.jobDueTime + " " + s.getTardiness());
             printer(s.previous);
         }
     }
@@ -96,6 +96,9 @@ public class EDP {
             value1 = 0;
         } else {
             Schedule subSchedule1 = subSchedule1WithK.removeID(kPrime.jobID);
+            if(subSchedule1.getDepth() == subSchedule1WithK.getDepth()) {
+                //System.out.println("This issue persists");
+            }
             if (subSchedule1 == null) {
                 value1 = 0;
             } else {

@@ -75,11 +75,12 @@ public class Schedule implements Comparable<Schedule> {
 			return this;
 		}
 		else if(this.previous.jobID == id) {
-			if(this.previous.previous != null) {
-				Schedule output = new Schedule(this.previous.previous, this.jobID, this.jobLength, this.jobDueTime);
-				output.tardiness = this.previous.previous.tardiness + Math.max(0,
-						this.previous.previous.getTotalTime() + this.jobLength - jobDueTime);
-				return this;
+			Schedule secondlast = this.previous.previous;
+			if(secondlast != null) {
+				Schedule output = new Schedule(secondlast, this.jobID, this.jobLength, this.jobDueTime);
+				output.tardiness = secondlast.tardiness + Math.max(0,
+						secondlast.getTotalTime() + this.jobLength - jobDueTime);
+				return output;
 			}
 			else {
 				Schedule output = new Schedule(null,this.jobID, this.jobLength,this.jobDueTime);
@@ -113,7 +114,6 @@ public class Schedule implements Comparable<Schedule> {
 			return this.previous.getScheduleBetween(id, id2);
 		}
 		else {
-			//Is this OK? Should we be able to get here? Should we then return null?
 			return null;
 		}
 	}
@@ -141,14 +141,13 @@ public class Schedule implements Comparable<Schedule> {
 
 	public Schedule fixTardiness(int startTime) {
 		if(this.previous == null) {
-			Schedule output = new Schedule(null, this.jobID, this.jobLength, this.jobDueTime);
-			output.tardiness = Math.max(0,startTime + this.jobLength - this.jobDueTime);
-			return output;
+			this.tardiness = Math.max(0,startTime + this.jobLength - this.jobDueTime);
+			return this;
 		}
 		else {
-			Schedule output = new Schedule(this.previous.fixTardiness(startTime), this.jobID, this.jobLength, this.jobDueTime);
-			output.tardiness = Math.max(0, this.previous.getTardiness() + this.jobLength - this.jobDueTime);
-			return output;
+			this.previous = this.previous.fixTardiness(startTime);
+			this.tardiness = Math.max(0, this.previous.getTardiness() + this.jobLength - this.jobDueTime);
+			return this;
 		}
 	}
 
