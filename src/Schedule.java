@@ -74,20 +74,19 @@ public class Schedule implements Comparable<Schedule> {
 		if(this.previous.jobID == id) {
 			Schedule secondlast = this.previous.previous;
 			if(secondlast != null) {
-				this.tardiness = secondlast.tardiness + Math.max(0,
+				Schedule output = new Schedule(secondlast, this.jobID, this.jobLength, this.jobDueTime);
+				output.tardiness = secondlast.tardiness + Math.max(0,
 						secondlast.getTotalTime() + this.jobLength - jobDueTime);
-				this.previous = secondlast;
 				return this;
 			}
 			else {
-				this.tardiness = Math.max(0,this.jobLength - jobDueTime);
-				this.previous = null;
-				return this;
+				Schedule output = new Schedule(null,this.jobID, this.jobLength,this.jobDueTime);
+				output.tardiness = Math.max(0,this.jobLength - jobDueTime);
+				return output;
 			}
 		}
 		else {
-			Schedule output = this;
-			output.previous = this.previous.removeID(id);
+			Schedule output = new Schedule(this.previous.removeID(id), this.jobID, this.jobLength, this.jobDueTime);
 			output.tardiness = output.previous.getTardiness() + Math.max(0, this.getTotalTime() - jobDueTime);
 			return output;
 		}
@@ -170,6 +169,15 @@ public class Schedule implements Comparable<Schedule> {
 		}
 		else {
 			return this.jobLength + this.previous.getCompletionTime(startTime);
+		}
+	}
+
+	public int getMinJobID() {
+		if(this.previous == null) {
+			return this.jobID;
+		}
+		else {
+			return this.previous.getMinJobID();
 		}
 	}
 

@@ -53,22 +53,27 @@ public class EDP {
 
     public int computeOptimalTardinessMaster(Schedule s, int startTime) {
         int j = s.jobID;
-        Schedule k = s.findK();
 
-        Schedule S = s.removeK();
-
-        Schedule kPrime = S.findK();
-        List<Integer> tardinesses = new ArrayList<Integer>();
-        // <, so no -1 correction needed for the fact that our jobs start at ID 0 rather than 1.
-        for(int delta = 0; delta < j - k.jobID; delta++) {
-            tardinesses.add(computeOptimalTardiness(s, startTime, delta));
+        if(s == null) {
+            //System.out.println("Got here");
+            return 0; // This, or 0? And: startTime, or some other value related to k?
         }
-
-        if (tardinesses.size() != 0) {
-            return tardinesses.stream().min(Integer::compare).get();
+        else if (s.getDepth()==1) {
+            return Math.max(0, startTime + s.jobLength - s.jobDueTime);
         }
         else {
-            return 0; // Or something else?
+            Schedule k = s.findK();
+
+            Schedule S = s.removeK();
+
+            Schedule kPrime = S.findK();
+            List<Integer> tardinesses = new ArrayList<Integer>();
+            // [jobs start at 0 instead of 1] cancel each other out here in j and k
+            for (int delta = 0; delta <= j - k.jobID; delta++) {
+                tardinesses.add(computeOptimalTardiness(s, startTime, delta));
+            }
+
+            return tardinesses.stream().min(Integer::compare).get();
         }
     }
 
@@ -82,7 +87,10 @@ public class EDP {
 
         if(S == null) {
             //System.out.println("Got here");
-            return 0; // Should we really?
+            return 0; // This, or 0? And: startTime, or some other value related to k?
+        }
+        else if (S.getDepth()==1) {
+            return Math.max(0, startTime + s.jobLength - s.jobDueTime);
         }
         else {
             Schedule kPrime = S.findK();
@@ -97,7 +105,7 @@ public class EDP {
             // itself starting count from 0. I've removed the -1 for now, but let's discuss soon.
             //
             //Also: id = 0 , or id = startTime?!
-            Schedule subSchedule1WithK = S.getScheduleBetween(0, kPrime.jobID + delta);
+            Schedule subSchedule1WithK = S.removeK().getScheduleBetween(S.removeK().getMinJobID(), kPrime.jobID + delta);
             if (subSchedule1WithK == null) {
                 value1 = 0;
             } else {
@@ -105,33 +113,16 @@ public class EDP {
                 if (subSchedule1 == null) {
                     value1 = 0;
                 } else {
-                    if (subSchedule1.getDepth() <= 2) {
-                        if (subSchedule1.getDepth() == 1) {
-                            value1 = computeTardiness(subSchedule1, startTime);
-                        }
-                        //subSchedule1.getDepth() == 2
-                        else {
-                            subSchedule1 = subSchedule1.fixTardiness(startTime);
-                            int T1 = computeTardiness(subSchedule1, startTime);
-
-                            Schedule temp = subSchedule1.previous;
-                            subSchedule1.previous = null;
-                            temp.previous = subSchedule1;
-                            int T2 = computeTardiness(temp, startTime);
-                            value1 = min(T1, T2);
-                        }
-                    } else {
-                        value1 = computeOptimalTardinessMaster(subSchedule1, startTime);
-                    }
+                    value1 = computeOptimalTardinessMaster(subSchedule1, startTime);
                 }
             }
 
             // ---------------- CALCULATION OF VALUE 2
-            // Note: s, not S. (Note: S = s - {job_kPrime}).
-            Schedule subSchedule2 = s.getScheduleBetween(0, kPrime.jobID + delta);
-            int completionTimeKPrime = subSchedule2.getCompletionTime(startTime);
+            Schedule subSchedule2 = s.getScheduleBetween(s.getMinJobID(), kPrime.jobID + delta);
             int value2;
+            int completionTimeKPrime;
             if (subSchedule2 != null) {
+                completionTimeKPrime = subSchedule2.getCompletionTime(startTime);
                 value2 = Math.max(0, completionTimeKPrime - kPrime.jobDueTime);
             } else {
                 throw new java.lang.Error("Something went wrong. "
@@ -148,24 +139,7 @@ public class EDP {
                 if (subSchedule3 == null) {
                     value3 = 0;
                 } else {
-                    if (subSchedule3.getDepth() <= 2) {
-                        if (subSchedule3.getDepth() == 1) {
-                            value3 = computeTardiness(subSchedule3, completionTimeKPrime);
-                        }
-                        //subSchedule1.getDepth() == 2
-                        else {
-                            subSchedule3 = subSchedule3.fixTardiness(completionTimeKPrime);
-                            int T1 = computeTardiness(subSchedule3, completionTimeKPrime);
-
-                            Schedule temp = subSchedule3.previous;
-                            subSchedule3.previous = null;
-                            temp.previous = subSchedule3;
-                            int T2 = computeTardiness(temp, completionTimeKPrime);
-                            value3 = min(T1, T2);
-                        }
-                    } else {
-                        value3 = computeOptimalTardinessMaster(subSchedule3, completionTimeKPrime);
-                    }
+                    value3 = computeOptimalTardinessMaster(subSchedule3, completionTimeKPrime);
                 }
             }
 
