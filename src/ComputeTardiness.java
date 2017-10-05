@@ -49,14 +49,17 @@ public class ComputeTardiness {
 			System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
 		}
 
+		BestFirst bestFirst = new BestFirst(instance);
+		Schedule bestFirstSchedule = bestFirst.getSchedule();
+		System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
+
+		if(edpTardiness > bestFirstSchedule.getTardiness()) {
+			System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
+		}
 
 		if(edpTardiness > 0) {
 			System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		}
-		
-//		BestFirst bestFirst = new BestFirst(instance);
-//		Schedule bestFirstSchedule = bestFirst.getSchedule();
-//		System.out.println(bestFirstSchedule.getTardiness());
 
 	}
 }

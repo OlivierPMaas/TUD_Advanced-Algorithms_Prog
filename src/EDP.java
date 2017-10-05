@@ -121,11 +121,10 @@ public class EDP {
 
         // ---------------- CALCULATION OF VALUE 3
         int value3;
-        Schedule subSchedule3WithK = S.getScheduleBetween(kPrime.jobID + delta + 1, j);
-        if (subSchedule3WithK == null) {
+        Schedule subSchedule3 = S.getScheduleBetween(kPrime.jobID + delta + 1, j);
+        if (subSchedule3 == null) {
             value3 = 0;
         } else {
-            Schedule subSchedule3 = subSchedule3WithK.removeID(kPrime.jobID);
             if (subSchedule3 == null) {
                 value3 = 0;
             } else {
