@@ -35,7 +35,8 @@ public class EDP {
         return new Schedule(resetIDs(s.previous, jobs), depth - 1, s.jobLength, jobDueTime);
     }
 
-    public int findOptimalTardiness() {
+    public int findOptimalTardiness()
+    {
         return computeOptimalTardinessMaster(this.greedyScheduleFixed,0);
     }
 
@@ -53,20 +54,16 @@ public class EDP {
 
     public int computeOptimalTardinessMaster(Schedule s, int startTime) {
         int j = s.jobID;
+        Schedule k = s.findK();
 
         if(s == null) {
             //System.out.println("Got here");
             return 0; // This, or 0? And: startTime, or some other value related to k?
         }
         else if (s.getDepth()==1) {
-            return Math.max(0, startTime + s.jobLength - s.jobDueTime);
+            return Math.max(0, startTime + k.jobLength - k.jobDueTime);
         }
         else {
-            Schedule k = s.findK();
-
-            Schedule S = s.removeK();
-
-            Schedule kPrime = S.findK();
             List<Integer> tardinesses = new ArrayList<Integer>();
             // [jobs start at 0 instead of 1] cancel each other out here in j and k
             for (int delta = 0; delta <= j - k.jobID; delta++) {
@@ -78,74 +75,63 @@ public class EDP {
     }
 
     public int computeOptimalTardiness(Schedule s, int startTime, int delta) {
+        int i = s.getMinJobID();
         int j = s.jobID;
 
-        //... When is k scheduled???
-        Schedule k = s.findK();
-
+        Schedule kPrime = s.findK();
         Schedule S = s.removeK();
 
-        if(S == null) {
-            //System.out.println("Got here");
-            return 0; // This, or 0? And: startTime, or some other value related to k?
-        }
-        else if (S.getDepth()==1) {
-            return Math.max(0, startTime + s.jobLength - s.jobDueTime);
-        }
-        else {
-            Schedule kPrime = S.findK();
+        // ---------------- CALCULATION OF VALUE 1
 
-            // ---------------- CALCULATION OF VALUE 1
+        int value1;
 
-            int value1;
-
-            // -1 at id2, because we start counting at 0 instead of at 1 (as in Lawler 1977).
-            //
-            // WATCH OOUUUUUUT: I think we might not actually need to subtract 1 after all, because our kPrime jobID is
-            // itself starting count from 0. I've removed the -1 for now, but let's discuss soon.
-            //
-            //Also: id = 0 , or id = startTime?!
-            Schedule subSchedule1WithK = S.removeK().getScheduleBetween(S.removeK().getMinJobID(), kPrime.jobID + delta);
-            if (subSchedule1WithK == null) {
+        // -1 at id2, because we start counting at 0 instead of at 1 (as in Lawler 1977).
+        //
+        // WATCH OOUUUUUUT: I think we might not actually need to subtract 1 after all, because our kPrime jobID is
+        // itself starting count from 0. I've removed the -1 for now, but let's discuss soon.
+        //
+        //Also: id = 0 , or id = startTime?!
+        Schedule subSchedule1WithK = S.getScheduleBetween(i, kPrime.jobID + delta);
+        if (subSchedule1WithK == null) {
+            value1 = 0;
+        } else {
+            Schedule subSchedule1 = subSchedule1WithK.removeID(kPrime.jobID);
+            if (subSchedule1 == null) {
                 value1 = 0;
             } else {
-                Schedule subSchedule1 = subSchedule1WithK.removeK();
-                if (subSchedule1 == null) {
-                    value1 = 0;
-                } else {
-                    value1 = computeOptimalTardinessMaster(subSchedule1, startTime);
-                }
+                value1 = computeOptimalTardinessMaster(subSchedule1, startTime);
             }
+        }
 
-            // ---------------- CALCULATION OF VALUE 2
-            Schedule subSchedule2 = s.getScheduleBetween(s.getMinJobID(), kPrime.jobID + delta);
-            int value2;
-            int completionTimeKPrime;
-            if (subSchedule2 != null) {
-                completionTimeKPrime = subSchedule2.getCompletionTime(startTime);
-                value2 = Math.max(0, completionTimeKPrime - kPrime.jobDueTime);
-            } else {
-                throw new java.lang.Error("Something went wrong. "
-                        + "This schedule can't be empty; at the very least, it should include k.");
-            }
+        // ---------------- CALCULATION OF VALUE 2
+        // small s, because we want kPrime to be included and counted as well.
+        Schedule subSchedule2 = s.getScheduleBetween(i, kPrime.jobID + delta);
+        int value2;
+        int completionTimeKPrime;
+        if (subSchedule2 != null) {
+            completionTimeKPrime = subSchedule2.getCompletionTime(startTime);
+            value2 = Math.max(0, completionTimeKPrime - kPrime.jobDueTime);
+        } else {
+            throw new java.lang.Error("Something went wrong. "
+                    + "This schedule can't be empty; at the very least, it should include k.");
+        }
 
-            // ---------------- CALCULATION OF VALUE 3
-            int value3;
-            Schedule subSchedule3WithK = S.getScheduleBetween(kPrime.jobID + delta + 1, j);
-            if (subSchedule3WithK == null) {
+        // ---------------- CALCULATION OF VALUE 3
+        int value3;
+        Schedule subSchedule3WithK = S.getScheduleBetween(kPrime.jobID + delta + 1, j);
+        if (subSchedule3WithK == null) {
+            value3 = 0;
+        } else {
+            Schedule subSchedule3 = subSchedule3WithK.removeID(kPrime.jobID);
+            if (subSchedule3 == null) {
                 value3 = 0;
             } else {
-                Schedule subSchedule3 = subSchedule3WithK.removeK();
-                if (subSchedule3 == null) {
-                    value3 = 0;
-                } else {
-                    value3 = computeOptimalTardinessMaster(subSchedule3, completionTimeKPrime);
-                }
+                value3 = computeOptimalTardinessMaster(subSchedule3, completionTimeKPrime);
             }
-
-            // ---------------- Result
-            return value1 + value2 + value3;
         }
+
+        // ---------------- Result
+        return value1 + value2 + value3;
     }
 
     public int computeTardiness(Schedule s, int startTime) {

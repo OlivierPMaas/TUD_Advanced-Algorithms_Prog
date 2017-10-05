@@ -71,7 +71,10 @@ public class Schedule implements Comparable<Schedule> {
 		if(this.jobID == id) {
 			return this.previous;
 		}
-		if(this.previous.jobID == id) {
+		if(this.previous == null) {
+			return this;
+		}
+		else if(this.previous.jobID == id) {
 			Schedule secondlast = this.previous.previous;
 			if(secondlast != null) {
 				Schedule output = new Schedule(secondlast, this.jobID, this.jobLength, this.jobDueTime);
