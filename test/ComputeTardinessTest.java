@@ -1,19 +1,24 @@
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Created by Olivier on 9/29/2017.
  */
 class ComputeTardinessTest {
     @Test
     void main() {
-        String[] arg = {"instances/random_RDD=0.2_TF=0.2_#5.dat"};
-        String[] arg2 = {"instances/random_RDD=0.2_TF=0.2_#10.dat"};
-        String[] arg3 = {"instances/random_RDD=0.2_TF=0.2_#15.dat"};
-        ComputeTardiness.main(arg);
-        ComputeTardiness.main(arg2);
-        ComputeTardiness.main(arg3);
+        String[] values = {"0.2", "0.4", "0.6", "0.8", "1.0"};
+        String[] fiveToHundred = {"5","10"};//,"15","20"};//"25", "30","35","40","45","50",
+                //"55","60","65","70","75","80", "85","90","95","100"};
+        for (String value1 : values) {
+            for (String value2 : values) {
+                for (String value3 : fiveToHundred) {
+                    String[] arg = {String.format(String.format(String.format("instances/random_RDD=%s", value1) + "_TF=%s", value2) + "_#%s.dat",value3)};
+                    System.out.println("RDD=" + value1 + ", TF=" + value2 + ", #" + value3);
+                    ComputeTardiness.main(arg);
+                    System.out.println("");
+                }
+            }
+        }
     }
 
 }
