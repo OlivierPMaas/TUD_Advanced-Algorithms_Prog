@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.Math.min;
 
@@ -11,6 +9,7 @@ public class EDP {
     private int numJobs;
     private int[][] jobs;
     private Schedule greedyScheduleFixed;
+    private HashMap<List<Object>,Integer> memo;
 
     public EDP(ProblemInstance instance) {
         numJobs = instance.getNumJobs();
@@ -23,6 +22,7 @@ public class EDP {
         // Note that we now lose the ability to return a schedule for the original jobs.
         // That's fine for this assignment; we only need to return the optimal tardiness.
         this.greedyScheduleFixed = resetIDs(greedySchedule, jobs);
+        this.memo = new HashMap<List<Object>,Integer>();
     }
 
     public Schedule resetIDs(Schedule s, int[][] jobs) {
@@ -44,6 +44,14 @@ public class EDP {
     public int computeOptimalTardinessMaster(Schedule s, int startTime) {
         int j = s.jobID;
         Schedule k = s.findK();
+        List<Integer> jobArray = s.getJobs();
+
+        List<Object> input = new ArrayList<Object>();
+        input.add(jobArray);
+        input.add(startTime);
+        if(memo.containsKey(input)) {
+            return memo.get(input);
+        }
 
         if(s == null) {
             return 0;
@@ -58,7 +66,9 @@ public class EDP {
                 tardinesses.add(computeOptimalTardiness(s, startTime, delta));
             }
 
-            return tardinesses.stream().min(Integer::compare).get();
+            int output = tardinesses.stream().min(Integer::compare).get();
+            memo.put(input, output);
+            return output;
         }
     }
 
