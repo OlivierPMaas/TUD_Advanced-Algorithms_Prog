@@ -1,3 +1,5 @@
+import com.sun.deploy.security.MozillaJSSDSASignature;
+
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -33,33 +35,46 @@ public class ComputeTardiness {
 		return instance;
 	}
 
-	// reads a problem, and outputs the result of both greedy and best-first
+	// reads a problem, and outputs the result of both greedy, best-first and EDP
     public static void main (String args[]) {
-		ProblemInstance instance = readInstance(args[0]);
+		//long startTime = System.nanoTime();
+
+		if (args.length == 0){
+			throw new java.lang.Error("Please provide filename in command");
+		}
+
+		String fileName = args[0];
+		ProblemInstance instance = readInstance(fileName);
 
 		EDP edp = new EDP(instance);
 		int edpTardiness = edp.findOptimalTardiness();
-		System.out.println("EDP tardiness: " + edpTardiness);
+		//System.out.println("EDP tardiness: " + edpTardiness);
+		System.out.println(edpTardiness);
 
-		Greedy greedy = new Greedy(instance);
-		Schedule greedySchedule = greedy.getSchedule();
-		System.out.println("Greedy tardiness: " + greedySchedule.getTardiness());
+		//Greedy greedy = new Greedy(instance);
+		//Schedule greedySchedule = greedy.getSchedule();
+		//System.out.println("Greedy tardiness: " + greedySchedule.getTardiness());
 
 		//if(edpTardiness > greedySchedule.getTardiness()) {
 		//	System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
 		//}
 
-		BestFirst bestFirst = new BestFirst(instance);
-		Schedule bestFirstSchedule = bestFirst.getSchedule();
-		System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
+		//BestFirst bestFirst = new BestFirst(instance);
+		//Schedule bestFirstSchedule = bestFirst.getSchedule();
+		//System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
+
+		//long endTime   = System.nanoTime();
+		//long totalTime = (endTime - startTime)/1000;
+		//System.out.println(totalTime);
 
 		//if(edpTardiness > bestFirstSchedule.getTardiness()) {
 		//	System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
 		//}
 
-		if(edpTardiness != bestFirst.getSchedule().getTardiness()) {
-			System.out.println("-----------------------------------------EDP INCORRECT\n\n\n");
-		}
+		//if(edpTardiness != bestFirst.getSchedule().getTardiness()) {
+		//	System.out.println("-----------------------------------------EDP INCORRECT\n\n\n");
+		//}
+
 		//if(edpTardiness > 0) {
 		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		//}

@@ -2,9 +2,6 @@ import java.util.*;
 
 import static java.lang.Math.min;
 
-/**
- * Created by Olivier on 10/3/2017.
- */
 public class EDP {
     private int numJobs;
     private int[][] jobs;
