@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Schedule implements Comparable<Schedule> {
 	// A linked-list is a relatively efficient representation of a schedule
@@ -180,6 +184,15 @@ public class Schedule implements Comparable<Schedule> {
 		else {
 			return this.previous.getMinJobID();
 		}
+	}
+
+	public List<Integer> getJobs() {
+		List<Integer> result = new ArrayList<Integer>();
+		result.add(this.jobID);
+		if(this.previous != null) {
+			result.addAll(this.previous.getJobs());
+		}
+		return result;
 	}
 
 	public int getTardiness(){

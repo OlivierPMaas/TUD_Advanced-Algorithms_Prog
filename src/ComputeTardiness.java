@@ -45,21 +45,24 @@ public class ComputeTardiness {
 		Schedule greedySchedule = greedy.getSchedule();
 		System.out.println("Greedy tardiness: " + greedySchedule.getTardiness());
 
-		if(edpTardiness > greedySchedule.getTardiness()) {
-			System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
-		}
+		//if(edpTardiness > greedySchedule.getTardiness()) {
+		//	System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
+		//}
 
 		BestFirst bestFirst = new BestFirst(instance);
 		Schedule bestFirstSchedule = bestFirst.getSchedule();
 		System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
 
-		if(edpTardiness > bestFirstSchedule.getTardiness()) {
-			System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
-		}
+		//if(edpTardiness > bestFirstSchedule.getTardiness()) {
+		//	System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
+		//}
 
-		if(edpTardiness > 0) {
-			System.out.println("-----------------------------------------EDP > 0\n\n\n");
+		if(edpTardiness != bestFirst.getSchedule().getTardiness()) {
+			System.out.println("-----------------------------------------EDP INCORRECT\n\n\n");
 		}
+		//if(edpTardiness > 0) {
+		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
+		//}
 
 	}
 }
