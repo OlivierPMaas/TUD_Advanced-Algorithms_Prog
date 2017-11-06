@@ -195,6 +195,21 @@ public class Schedule implements Comparable<Schedule> {
 		return result;
 	}
 
+	public Schedule rescale(double K) {
+		Schedule rescaledSchedule;
+		if(this.previous == null) {
+			// Q: The article says that we SHOULD NOT round the division of the DueTimes...
+			// We'll have to refactor the entire Schedule class in order to allow for DueTimes of type double everywhere.
+			rescaledSchedule = new Schedule(null, this.jobID,
+					(int) Math.floor(jobLength/K), (int) Math.floor(jobDueTime/K));
+		}
+		else {
+			rescaledSchedule = new Schedule(this.previous.rescale(K),this.jobID,
+					(int) Math.floor(jobLength/K), (int) Math.floor(jobDueTime/K));
+		}
+		return rescaledSchedule.fixTardiness(0);
+	}
+
 	public int getTardiness(){
 		return tardiness;
 	}

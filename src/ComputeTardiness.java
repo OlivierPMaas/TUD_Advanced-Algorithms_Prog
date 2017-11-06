@@ -48,8 +48,8 @@ public class ComputeTardiness {
 
 		EDP edp = new EDP(instance);
 		int edpTardiness = edp.findOptimalTardiness();
-		//System.out.println("EDP tardiness: " + edpTardiness);
-		System.out.println(edpTardiness);
+		System.out.println("EDP tardiness: " + edpTardiness);
+		//System.out.println(edpTardiness);
 
 		//Greedy greedy = new Greedy(instance);
 		//Schedule greedySchedule = greedy.getSchedule();
@@ -78,6 +78,11 @@ public class ComputeTardiness {
 		//if(edpTardiness > 0) {
 		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		//}
+
+		double epsilon = 0.1;
+		Approx approx = new Approx(instance);
+		int approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
+		System.out.println("Approx tardiness: " + approxTardiness);
 
 	}
 }
