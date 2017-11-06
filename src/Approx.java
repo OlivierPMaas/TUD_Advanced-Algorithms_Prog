@@ -27,7 +27,7 @@ public class Approx {
     }
 
     public int ApproximateOptimalTardiness(double epsilon) {
-        int Tmax = this.greedyScheduleFixed.getTardiness();
+        double Tmax = this.greedyScheduleFixed.getTardiness();
         if(Tmax == 0) {
             return 0;
         }

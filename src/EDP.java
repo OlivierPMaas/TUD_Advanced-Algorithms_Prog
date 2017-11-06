@@ -6,7 +6,7 @@ public class EDP {
     private int numJobs;
     private int[][] jobs;
     private Schedule greedyScheduleFixed;
-    private HashMap<List<Object>,Integer> memo;
+    private HashMap<List<Object>,Double> memo;
 
     public EDP(ProblemInstance instance) {
         numJobs = instance.getNumJobs();
@@ -19,7 +19,7 @@ public class EDP {
         // Note that we now lose the ability to return a schedule for the original jobs.
         // That's fine for this assignment; we only need to return the optimal tardiness.
         this.greedyScheduleFixed = resetIDs(greedySchedule, jobs);
-        this.memo = new HashMap<List<Object>,Integer>();
+        this.memo = new HashMap<List<Object>,Double>();
     }
 
     public Schedule resetIDs(Schedule s, int[][] jobs) {
@@ -32,13 +32,13 @@ public class EDP {
         return new Schedule(resetIDs(s.previous, jobs), depth - 1, s.jobLength, jobDueTime);
     }
 
-    public int findOptimalTardiness()
+    public double findOptimalTardiness()
     {
         return computeOptimalTardinessMaster(this.greedyScheduleFixed,0);
     }
 
 
-    public int computeOptimalTardinessMaster(Schedule s, int startTime) {
+    public double computeOptimalTardinessMaster(Schedule s, double startTime) {
         int j = s.jobID;
         Schedule k = s.findK();
         List<Integer> jobArray = s.getJobs();
@@ -57,19 +57,19 @@ public class EDP {
             return Math.max(0, startTime + k.jobLength - k.jobDueTime);
         }
         else {
-            List<Integer> tardinesses = new ArrayList<Integer>();
+            List<Double> tardinesses = new ArrayList<Double>();
             // [jobs start at 0 instead of 1] cancel each other out here in j and k
             for (int delta = 0; delta <= j - k.jobID; delta++) {
                 tardinesses.add(computeOptimalTardiness(s, startTime, delta));
             }
 
-            int output = tardinesses.stream().min(Integer::compare).get();
+            double output = tardinesses.stream().min(Double::compare).get();
             memo.put(input, output);
             return output;
         }
     }
 
-    public int computeOptimalTardiness(Schedule s, int startTime, int delta) {
+    public double computeOptimalTardiness(Schedule s, double startTime, int delta) {
         int i = s.getMinJobID();
         int j = s.jobID;
 
@@ -77,7 +77,7 @@ public class EDP {
         Schedule S = s.removeK();
 
         // ---------------- CALCULATION OF VALUE 1
-        int value1;
+        double value1;
         Schedule subSchedule1WithK = S.getScheduleBetween(i, kPrime.jobID + delta);
         if (subSchedule1WithK == null) {
             value1 = 0;
@@ -93,8 +93,8 @@ public class EDP {
         // ---------------- CALCULATION OF VALUE 2
         // small s, because we want kPrime to be included and counted as well.
         Schedule subSchedule2 = s.getScheduleBetween(i, kPrime.jobID + delta);
-        int value2;
-        int completionTimeKPrime;
+        double value2;
+        double completionTimeKPrime;
         if (subSchedule2 != null) {
             completionTimeKPrime = subSchedule2.getCompletionTime(startTime);
             value2 = Math.max(0, completionTimeKPrime - kPrime.jobDueTime);
@@ -104,7 +104,7 @@ public class EDP {
         }
 
         // ---------------- CALCULATION OF VALUE 3
-        int value3;
+        double value3;
         Schedule subSchedule3 = S.getScheduleBetween(kPrime.jobID + delta + 1, j);
         if (subSchedule3 == null) {
             value3 = 0;
@@ -120,7 +120,7 @@ public class EDP {
         return value1 + value2 + value3;
     }
 
-    public int computeTardiness(Schedule s, int startTime) {
+    public double computeTardiness(Schedule s, int startTime) {
         return s.fixTardiness(startTime).getTardiness();
     }
 }
