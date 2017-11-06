@@ -26,18 +26,18 @@ public class Approx {
         return new Schedule(resetIDs(s.previous, jobs), depth - 1, s.jobLength, jobDueTime);
     }
 
-    public int ApproximateOptimalTardiness(double epsilon) {
-        int Tmax = this.greedyScheduleFixed.getTardiness();
-        if(Tmax == 0) {
-            return 0;
-        }
-        else {
-            double K = 2*epsilon/(numJobs * (numJobs+1)) * Tmax;
-            // Q: Use greedySchedule or some un-processed schedule?
-            Schedule rescaledSchedule = this.greedyScheduleFixed.rescale(K);
-            // CALL EDP on current schedule
-            //return finalSchedule.getTardiness();
-        }
-    }
+//    public int ApproximateOptimalTardiness(double epsilon) {
+//        double Tmax = this.greedyScheduleFixed.getTardiness();
+//        if(Tmax == 0) {
+//            return 0;
+//        }
+//        else {
+//            double K = 2*epsilon/(numJobs * (numJobs+1)) * Tmax;
+//            // Q: Use greedySchedule or some un-processed schedule?
+//            Schedule rescaledSchedule = this.greedyScheduleFixed.rescale(K);
+//            // CALL EDP on current schedule
+//            //return finalSchedule.getTardiness();
+//        }
+//    }
 
 }

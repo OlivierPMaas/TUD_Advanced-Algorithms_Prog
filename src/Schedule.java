@@ -10,13 +10,13 @@ public class Schedule implements Comparable<Schedule> {
 	// between schedules, this implementation stores this overlap only once
 	public Schedule previous;
 	public int jobID;
-	public int jobLength;
-	public int jobDueTime;
+	public double jobLength;
+	public double jobDueTime;
 	
 	// tardiness can be calculated instead of memorized
 	// however, we need to calculate it a lot, so we memorize it
 	// if memory is an issue, however, try calculating it
-	private int tardiness;
+	private double tardiness;
 
 	public Schedule(){
 		this.previous = null;
@@ -27,7 +27,7 @@ public class Schedule implements Comparable<Schedule> {
 	}
 	
 	// add an additional job to the schedule
-	public Schedule(Schedule s, int jobID, int jobLength, int jobDueTime){		
+	public Schedule(Schedule s, int jobID, double jobLength, double jobDueTime){
 		this.previous = s;
 		this.jobID = jobID;
 		this.jobLength = jobLength;
@@ -38,14 +38,16 @@ public class Schedule implements Comparable<Schedule> {
 			this.tardiness += previous.getTardiness();
 		}
 	}
-	
+
+	// --Switched out code, as suggested by teacher's comments.
+	//
 	// used by the best-first search
 	// currently, schedules are traversed in smallest total tardiness order
 	public int compareTo(Schedule o){
-		return getTardiness() - o.getTardiness();
-		
+		//return getTardiness() - o.getTardiness();
+
 		// replace with the following to get a depth-first search
-		// return get_depth() - o.get_depth();
+		return this.getDepth() - o.getDepth();
 	}
 
 	// Used by EDP
@@ -162,13 +164,13 @@ public class Schedule implements Comparable<Schedule> {
 		}
 	}
 
-	public int getTotalTime(){
-		int time = jobLength;
+	public double getTotalTime(){
+		double time = jobLength;
 		if(previous != null) time += previous.getTotalTime();
 		return time;
 	}
 
-	public int getCompletionTime(int startTime) {
+	public double getCompletionTime(double startTime) {
 		if(this.previous == null) {
 			return this.jobLength + startTime;
 		}
@@ -210,7 +212,7 @@ public class Schedule implements Comparable<Schedule> {
 		return rescaledSchedule.fixTardiness(0);
 	}
 
-	public int getTardiness(){
+	public double getTardiness(){
 		return tardiness;
 	}
 	

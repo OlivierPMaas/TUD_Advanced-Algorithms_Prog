@@ -47,7 +47,7 @@ public class ComputeTardiness {
 		ProblemInstance instance = readInstance(fileName);
 
 		EDP edp = new EDP(instance);
-		int edpTardiness = edp.findOptimalTardiness();
+		double edpTardiness = edp.findOptimalTardiness();
 		System.out.println("EDP tardiness: " + edpTardiness);
 		//System.out.println(edpTardiness);
 
@@ -59,9 +59,9 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
 		//}
 
-		//BestFirst bestFirst = new BestFirst(instance);
-		//Schedule bestFirstSchedule = bestFirst.getSchedule();
-		//System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
+		BestFirst bestFirst = new BestFirst(instance);
+		Schedule bestFirstSchedule = bestFirst.getSchedule();
+		System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
 
 		//long endTime   = System.nanoTime();
 		//long totalTime = (endTime - startTime)/1000;
@@ -79,10 +79,10 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		//}
 
-		double epsilon = 0.1;
-		Approx approx = new Approx(instance);
-		int approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
-		System.out.println("Approx tardiness: " + approxTardiness);
+		//double epsilon = 0.1;
+		//Approx approx = new Approx(instance);
+		//int approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
+		//System.out.println("Approx tardiness: " + approxTardiness);
 
 	}
 }
