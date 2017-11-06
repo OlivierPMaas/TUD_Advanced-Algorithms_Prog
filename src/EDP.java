@@ -22,6 +22,11 @@ public class EDP {
         this.memo = new HashMap<List<Object>,Double>();
     }
 
+    public EDP(Schedule greedySchedule) {
+        this.memo = new HashMap<List<Object>,Double>();
+    }
+
+
     public Schedule resetIDs(Schedule s, int[][] jobs) {
         int depth = s.getDepth();
         int jobDueTime = jobs[s.jobID][1];

@@ -212,6 +212,16 @@ public class Schedule implements Comparable<Schedule> {
 		return rescaledSchedule.fixTardiness(0);
 	}
 
+	public double getMaxIndividualTardiness() {
+		if(this.previous == null) {
+			return this.jobDueTime - this.jobLength;
+		}
+		else {
+			double previousMax = this.previous.getMaxIndividualTardiness();
+			return Math.max(previousMax, this.jobDueTime - this.jobLength);
+		}
+	}
+
 	public double getTardiness(){
 		return tardiness;
 	}
