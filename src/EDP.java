@@ -4,7 +4,7 @@ import static java.lang.Math.min;
 
 public class EDP {
     private int numJobs;
-    private int[][] jobs;
+    private double[][] jobs;
     private Schedule greedyScheduleFixed;
     private HashMap<List<Object>,Double> memo;
 
@@ -22,16 +22,9 @@ public class EDP {
         this.memo = new HashMap<List<Object>,Double>();
     }
 
-    //Q: Is this method a good replacement for the above EDP-method?
-    public EDP()
-    {
-        this.memo = new HashMap<List<Object>,Double>();
-    }
-
-
-    public Schedule resetIDs(Schedule s, int[][] jobs) {
+    public Schedule resetIDs(Schedule s, double[][] jobs) {
         int depth = s.getDepth();
-        int jobDueTime = jobs[s.jobID][1];
+        double jobDueTime = jobs[s.jobID][1];
         // depth - 1 because we start counting at 0.
         if(s.previous == null) {
             return new Schedule(null, depth - 1, s.jobLength, jobDueTime);

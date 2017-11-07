@@ -11,12 +11,12 @@ public class ComputeTardiness {
 		
 		try {
 			int numJobs = 0;
-			int[][] jobs = null;
+			double[][] jobs = null;
 			
 			Scanner sc = new Scanner(new BufferedReader(new FileReader(filename)));
 			if(sc.hasNextInt()){
 				numJobs = sc.nextInt();
-				jobs = new int[numJobs][2];
+				jobs = new double[numJobs][2];
 				int nextJobID = 0;
 			
 				while (sc.hasNextInt() && nextJobID < numJobs) {
@@ -59,9 +59,9 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
 		//}
 
-		//BestFirst bestFirst = new BestFirst(instance);
-		//Schedule bestFirstSchedule = bestFirst.getSchedule();
-		//System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
+//		BestFirst bestFirst = new BestFirst(instance);
+//		Schedule bestFirstSchedule = bestFirst.getSchedule();
+//		System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
 
 		//long endTime   = System.nanoTime();
 		//long totalTime = (endTime - startTime)/1000;

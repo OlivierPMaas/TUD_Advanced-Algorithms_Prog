@@ -10,7 +10,7 @@ public class Schedule implements Comparable<Schedule> {
 	// between schedules, this implementation stores this overlap only once
 	public Schedule previous;
 	public int jobID;
-	public int jobLength;
+	public double jobLength;
 	public double jobDueTime;
 	
 	// tardiness can be calculated instead of memorized
@@ -27,7 +27,7 @@ public class Schedule implements Comparable<Schedule> {
 	}
 	
 	// add an additional job to the schedule
-	public Schedule(Schedule s, int jobID, int jobLength, double jobDueTime){
+	public Schedule(Schedule s, int jobID, double jobLength, double jobDueTime){
 		this.previous = s;
 		this.jobID = jobID;
 		this.jobLength = jobLength;
@@ -200,8 +200,6 @@ public class Schedule implements Comparable<Schedule> {
 	public Schedule rescale(double K) {
 		Schedule rescaledSchedule;
 		if(this.previous == null) {
-			// Q: The article says that we SHOULD NOT round the division of the DueTimes...
-			// We'll have to refactor the entire Schedule class in order to allow for DueTimes of type double everywhere.
 			rescaledSchedule = new Schedule(null, this.jobID,
 					(int) Math.floor(jobLength/K), jobDueTime/K);
 		}
@@ -212,15 +210,34 @@ public class Schedule implements Comparable<Schedule> {
 		return rescaledSchedule.fixTardiness(0);
 	}
 
-	// Q: Is this the correct definition?
-	public double getMaxIndividualTardiness() {
+	public double getMaxIndividualTardiness(double startTime) {
 		if(this.previous == null) {
-			return this.getTardiness();
+			return Math.max(0,this.getCompletionTime(startTime) - this.jobDueTime);
 		}
 		else {
-			double previousMax = this.previous.getMaxIndividualTardiness();
-			return Math.max(previousMax, this.getTardiness());
+			double previousMax = this.previous.getMaxIndividualTardiness(startTime);
+			return Math.max(previousMax, Math.max(0,this.getCompletionTime(startTime)-this.jobDueTime));
 		}
+	}
+
+	public ProblemInstance makeProblemInstance() {
+		if(this.previous != null) {
+			ProblemInstance previousInstance = this.previous.makeProblemInstance();
+			double[][] previousJobs = previousInstance.getJobs();
+			int n = previousInstance.getNumJobs() + 1;
+			double[][] jobs;
+			jobs = new double[n][2];
+			for (int i = 0; i < n - 1; i++) {
+				jobs[i] = previousJobs[i];
+			}
+			jobs[n-1][0] = this.jobLength;
+			jobs[n-1][1] = this.jobDueTime;
+			return new ProblemInstance(n, jobs);
+		}
+		double[][] jobs = new double[1][2];
+		jobs[0][0] = this.jobLength;
+		jobs[0][1] = this.jobDueTime;
+		return new ProblemInstance(1,jobs);
 	}
 
 	public double getTardiness(){

@@ -1,6 +1,6 @@
 public class Approx {
     private int numJobs;
-    private int[][] jobs;
+    private double[][] jobs;
     private Schedule greedyScheduleFixed;
 
     public Approx(ProblemInstance instance) {
@@ -16,9 +16,9 @@ public class Approx {
         this.greedyScheduleFixed = resetIDs(greedySchedule, jobs);
     }
 
-    public Schedule resetIDs(Schedule s, int[][] jobs) {
+    public Schedule resetIDs(Schedule s, double[][] jobs) {
         int depth = s.getDepth();
-        int jobDueTime = jobs[s.jobID][1];
+        double jobDueTime = jobs[s.jobID][1];
         // depth - 1 because we start counting at 0.
         if(s.previous == null) {
             return new Schedule(null, depth - 1, s.jobLength, jobDueTime);
@@ -27,18 +27,16 @@ public class Approx {
     }
 
     public double ApproximateOptimalTardiness(double epsilon) {
-        // This is not what Tmax is.
-        //double Tmax = this.greedyScheduleFixed.getTardiness();
-        double Tmax = greedyScheduleFixed.getMaxIndividualTardiness();
+        double Tmax = greedyScheduleFixed.getMaxIndividualTardiness(0);
         if(Tmax == 0) {
             return 0;
         }
         else {
-            double K = 2*epsilon/(numJobs * (numJobs+1)) * Tmax;
+            double K = Tmax*(2*epsilon)/(numJobs * (numJobs+1));
             // Q: Use greedyScheduleFixed or some un-processed schedule?
             Schedule rescaledSchedule = this.greedyScheduleFixed.rescale(K);
             // Q: Does this function work correctly?
-            EDP edp = new EDP();
+            EDP edp = new EDP(rescaledSchedule.makeProblemInstance());
             return edp.computeOptimalTardinessMaster(rescaledSchedule,0);
             //return finalSchedule.getTardiness();
         }
