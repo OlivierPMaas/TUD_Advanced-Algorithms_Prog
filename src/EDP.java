@@ -22,7 +22,9 @@ public class EDP {
         this.memo = new HashMap<List<Object>,Double>();
     }
 
-    public EDP(Schedule greedySchedule) {
+    //Q: Is this method a good replacement for the above EDP-method?
+    public EDP()
+    {
         this.memo = new HashMap<List<Object>,Double>();
     }
 

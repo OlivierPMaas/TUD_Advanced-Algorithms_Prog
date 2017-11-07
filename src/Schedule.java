@@ -10,7 +10,7 @@ public class Schedule implements Comparable<Schedule> {
 	// between schedules, this implementation stores this overlap only once
 	public Schedule previous;
 	public int jobID;
-	public double jobLength;
+	public int jobLength;
 	public double jobDueTime;
 	
 	// tardiness can be calculated instead of memorized
@@ -27,7 +27,7 @@ public class Schedule implements Comparable<Schedule> {
 	}
 	
 	// add an additional job to the schedule
-	public Schedule(Schedule s, int jobID, double jobLength, double jobDueTime){
+	public Schedule(Schedule s, int jobID, int jobLength, double jobDueTime){
 		this.previous = s;
 		this.jobID = jobID;
 		this.jobLength = jobLength;
@@ -203,22 +203,23 @@ public class Schedule implements Comparable<Schedule> {
 			// Q: The article says that we SHOULD NOT round the division of the DueTimes...
 			// We'll have to refactor the entire Schedule class in order to allow for DueTimes of type double everywhere.
 			rescaledSchedule = new Schedule(null, this.jobID,
-					(int) Math.floor(jobLength/K), (int) Math.floor(jobDueTime/K));
+					(int) Math.floor(jobLength/K), jobDueTime/K);
 		}
 		else {
 			rescaledSchedule = new Schedule(this.previous.rescale(K),this.jobID,
-					(int) Math.floor(jobLength/K), (int) Math.floor(jobDueTime/K));
+					(int) Math.floor(jobLength/K), jobDueTime/K);
 		}
 		return rescaledSchedule.fixTardiness(0);
 	}
 
+	// Q: Is this the correct definition?
 	public double getMaxIndividualTardiness() {
 		if(this.previous == null) {
-			return this.jobDueTime - this.jobLength;
+			return this.getTardiness();
 		}
 		else {
 			double previousMax = this.previous.getMaxIndividualTardiness();
-			return Math.max(previousMax, this.jobDueTime - this.jobLength);
+			return Math.max(previousMax, this.getTardiness());
 		}
 	}
 

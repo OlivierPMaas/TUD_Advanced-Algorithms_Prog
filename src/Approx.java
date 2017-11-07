@@ -35,10 +35,10 @@ public class Approx {
         }
         else {
             double K = 2*epsilon/(numJobs * (numJobs+1)) * Tmax;
-            // Q: Use greedySchedule or some un-processed schedule?
+            // Q: Use greedyScheduleFixed or some un-processed schedule?
             Schedule rescaledSchedule = this.greedyScheduleFixed.rescale(K);
-            // CALL EDP on current schedule
-            EDP edp = new EDP(rescaledSchedule);
+            // Q: Does this function work correctly?
+            EDP edp = new EDP();
             return edp.computeOptimalTardinessMaster(rescaledSchedule,0);
             //return finalSchedule.getTardiness();
         }

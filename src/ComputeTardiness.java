@@ -79,7 +79,7 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		//}
 
-		double epsilon = 0.1;
+		double epsilon = 0.01;
 		Approx approx = new Approx(instance);
 		double approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
 		System.out.println("Approx tardiness: " + approxTardiness);
