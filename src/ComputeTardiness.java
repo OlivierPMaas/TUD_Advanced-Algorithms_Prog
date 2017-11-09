@@ -79,12 +79,28 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		//}
 
-		double epsilon = 0.001;
+		double epsilon = 0.00001;
 		Approx approx = new Approx(instance);
 		double approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
 		System.out.println("Approx tardiness: " + approxTardiness);
 		if(edpTardiness-approxTardiness >= epsilon*approx.Tmax && approxTardiness != 0) {
 			System.out.println("OH NO /n /n /n dijsfjadsfjddd");
 		};
+	}
+
+	public static void mainWithEpsilon(double epsilon, String args[]) {
+		if (args.length == 0){
+			throw new java.lang.Error("Please provide filename in command");
+		}
+
+		String fileName = args[0];
+		ProblemInstance instance = readInstance(fileName);
+
+		EDP edp = new EDP(instance);
+		double edpTardiness = edp.findOptimalTardiness();
+
+		Approx approx = new Approx(instance);
+		double approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
+		System.out.println(edpTardiness + " " + approxTardiness);
 	}
 }
