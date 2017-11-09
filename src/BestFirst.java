@@ -2,7 +2,7 @@ import java.util.PriorityQueue;
 
 public class BestFirst {
 	private int numJobs;
-	private int[][] jobs;
+	private double[][] jobs;
 	
 	public BestFirst(ProblemInstance instance) {
 		numJobs = instance.getNumJobs();

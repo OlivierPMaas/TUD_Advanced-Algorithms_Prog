@@ -11,12 +11,12 @@ public class ComputeTardiness {
 		
 		try {
 			int numJobs = 0;
-			int[][] jobs = null;
+			double[][] jobs = null;
 			
 			Scanner sc = new Scanner(new BufferedReader(new FileReader(filename)));
 			if(sc.hasNextInt()){
 				numJobs = sc.nextInt();
-				jobs = new int[numJobs][2];
+				jobs = new double[numJobs][2];
 				int nextJobID = 0;
 			
 				while (sc.hasNextInt() && nextJobID < numJobs) {
@@ -47,9 +47,9 @@ public class ComputeTardiness {
 		ProblemInstance instance = readInstance(fileName);
 
 		EDP edp = new EDP(instance);
-		int edpTardiness = edp.findOptimalTardiness();
-		//System.out.println("EDP tardiness: " + edpTardiness);
-		System.out.println(edpTardiness);
+		double edpTardiness = edp.findOptimalTardiness();
+		System.out.println("EDP tardiness: " + edpTardiness);
+		//System.out.println(edpTardiness);
 
 		//Greedy greedy = new Greedy(instance);
 		//Schedule greedySchedule = greedy.getSchedule();
@@ -59,9 +59,9 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP SUBOPTIMAL\n\n\n");
 		//}
 
-		//BestFirst bestFirst = new BestFirst(instance);
-		//Schedule bestFirstSchedule = bestFirst.getSchedule();
-		//System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
+//		BestFirst bestFirst = new BestFirst(instance);
+//		Schedule bestFirstSchedule = bestFirst.getSchedule();
+//		System.out.println("BestFirst tardiness: " + bestFirst.getSchedule().getTardiness());
 
 		//long endTime   = System.nanoTime();
 		//long totalTime = (endTime - startTime)/1000;
@@ -79,5 +79,28 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		//}
 
+		double epsilon = 0.00001;
+		Approx approx = new Approx(instance);
+		double approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
+		System.out.println("Approx tardiness: " + approxTardiness);
+		if(edpTardiness-approxTardiness >= epsilon*approx.Tmax && approxTardiness != 0) {
+			System.out.println("OH NO /n /n /n dijsfjadsfjddd");
+		};
+	}
+
+	public static void mainWithEpsilon(double epsilon, String args[]) {
+		if (args.length == 0){
+			throw new java.lang.Error("Please provide filename in command");
+		}
+
+		String fileName = args[0];
+		ProblemInstance instance = readInstance(fileName);
+
+		EDP edp = new EDP(instance);
+		double edpTardiness = edp.findOptimalTardiness();
+
+		Approx approx = new Approx(instance);
+		double approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
+		System.out.println(edpTardiness + " " + approxTardiness);
 	}
 }
