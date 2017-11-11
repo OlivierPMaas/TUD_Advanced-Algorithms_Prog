@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AAProg2Project:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/AAProg2Project_jar</output-path>
+    <root id="archive" name="AAProg2Project.jar">
+      <element id="module-output" name="AAProg2Project" />
+    </root>
+  </artifact>
+</component>
