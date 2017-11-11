@@ -43,12 +43,18 @@ public class ComputeTardiness {
 			throw new java.lang.Error("Please provide filename in command");
 		}
 
-		String fileName = args[0];
+		String epsilon_string = args[0];
+		double epsilon = Double.parseDouble(epsilon_string);
+		String fileName = args[1];
+
+		//Test arg
+		//String fileName = args[0];
+
 		ProblemInstance instance = readInstance(fileName);
 
 		EDP edp = new EDP(instance);
 		double edpTardiness = edp.findOptimalTardiness();
-		System.out.println("EDP tardiness: " + edpTardiness);
+		//System.out.println("EDP tardiness: " + edpTardiness);
 		//System.out.println(edpTardiness);
 
 		//Greedy greedy = new Greedy(instance);
@@ -79,13 +85,16 @@ public class ComputeTardiness {
 		//	System.out.println("-----------------------------------------EDP > 0\n\n\n");
 		//}
 
-		double epsilon = 0.00001;
+		//double epsilon = 0.00001;
 		Approx approx = new Approx(instance);
 		double approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
-		System.out.println("Approx tardiness: " + approxTardiness);
-		if(edpTardiness-approxTardiness >= epsilon*approx.Tmax && approxTardiness != 0) {
-			System.out.println("OH NO /n /n /n dijsfjadsfjddd");
-		};
+		//System.out.println("Approx tardiness: " + approxTardiness);
+		//if(edpTardiness-approxTardiness >= epsilon*approx.Tmax && approxTardiness != 0) {
+		//	System.out.println("OH NO /n /n /n dijsfjadsfjddd");
+		//};
+
+		String result=Double.toString(edpTardiness)+" "+Double.toString(approxTardiness);
+		System.out.println(result);
 	}
 
 	public static void mainWithEpsilon(double epsilon, String args[]) {
@@ -101,6 +110,8 @@ public class ComputeTardiness {
 
 		Approx approx = new Approx(instance);
 		double approxTardiness = approx.ApproximateOptimalTardiness(epsilon);
-		System.out.println(edpTardiness + " " + approxTardiness);
+		//System.out.println(edpTardiness);
+		//System.out.println(approxTardiness);
+		//System.out.println(edpTardiness+" "+approxTardiness);
 	}
 }
